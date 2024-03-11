@@ -2,13 +2,13 @@ package com.example.demo.dto;
 
 import java.util.Map;
 
-public class EmployeeListRequest {
+public class UpdateEmployeeRequest {
 	String token;
 	Map<String, String> data;
 	String reqid;
 	String _client_ts;
 	String _client_type;
-	String filter;
+	String empId;
 	public String getToken() {
 		return token;
 	}
@@ -39,10 +39,10 @@ public class EmployeeListRequest {
 	public void set_client_type(String _client_type) {
 		this._client_type = _client_type;
 	}
-	public String getFilter() {
-		return filter;
+	public String getEmpId() {
+		return empId;
 	}
-	public void setFilter(String filter) {
-		this.filter = filter;
+	public void setEmpId(String empId) {
+		this.empId = empId;
 	}
 }

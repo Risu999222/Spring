@@ -12,19 +12,27 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ApiEmployeeResponse;
 import com.example.demo.dto.ApiListResponse;
 import com.example.demo.dto.ApiResponse;
-import com.example.demo.dto.EmployeeFilteredList;
+import com.example.demo.dto.DeleteEmployeeRequest;
+import com.example.demo.dto.DeleteEmployeeResponse;
+import com.example.demo.dto.EmployeeDetailRequest;
+import com.example.demo.dto.EmployeeDetailResponse;
 import com.example.demo.dto.EmployeeListRequest;
 import com.example.demo.dto.EmployeeListResponse;
 import com.example.demo.dto.EmployeeRequest;
 import com.example.demo.dto.EmployeeResponse;
+import com.example.demo.dto.UpdateEmployee;
+import com.example.demo.dto.UpdateEmployeeRequest;
+import com.example.demo.dto.UpdateEmployeeResponse;
 import com.example.demo.entity.Employee;
 import com.example.demo.service.EmployeeService;
 
@@ -62,10 +70,10 @@ public class EmployeeController {
 		Long reportsTo = Long.parseLong(employeeRequest.getData().get("reportsTo"));
 		employee.setReportsTo(reportsTo);
 		
-		Long rankId = Long.parseLong(employeeRequest.getData().get("rankId"));
+		Long rankId = Long.parseLong(employeeRequest.getData().get("rankid"));
 		employee.setRankId(rankId);
 		
-		Long departmentId = Long.parseLong(employeeRequest.getData().get("deptId"));
+		Long departmentId = Long.parseLong(employeeRequest.getData().get("deptid"));
 		employee.setDeptId(departmentId);
 		
 		employee.setClientReqId(employeeRequest.getReqid());
@@ -98,7 +106,14 @@ public class EmployeeController {
 	
 	@GetMapping("/myhr/employee/list")
 	public ResponseEntity<EmployeeListResponse> listEmployee(@RequestBody EmployeeListRequest employeeListRequest){
-		ApiListResponse result = employeeService.listOfEmployees();
+		ApiListResponse result = new ApiListResponse();
+		if(employeeListRequest.getFilter() == null) {
+			result = employeeService.listOfEmployees();
+		}
+		else {
+			String filter = employeeListRequest.getFilter();
+			result = employeeService.listofFilteredEmployee(filter);
+		}
 		EmployeeListResponse employeelistResponse = new EmployeeListResponse();
 		if(result.getStatus() == "success") {
 			employeelistResponse.setReqid(employeeListRequest.getReqid());
@@ -129,5 +144,129 @@ public class EmployeeController {
 		return ResponseEntity.ok(employeelistResponse);
 	}
 	
+	@GetMapping("/myhr/employee/get")
+	public ResponseEntity<EmployeeDetailResponse> getEmployeeDetail(@RequestBody EmployeeDetailRequest employeeDetailRequest){
+		Long empId = Long.parseLong(employeeDetailRequest.getEmpId());
+		ApiEmployeeResponse result = employeeService.findEmployeeDetail(empId);
+		EmployeeDetailResponse empDetailResponse = new EmployeeDetailResponse();
+		if(result.getStatus() == "success") {
+			empDetailResponse.setReqid(employeeDetailRequest.getReqid());
+			empDetailResponse.setStatus(HttpStatus.OK);
+			empDetailResponse.setStatus_code(HttpStatus.OK.value());
+			empDetailResponse.setStatus_msg(HttpStatus.OK.toString());
+			empDetailResponse.set_server_ts(LocalDateTime.now());
+			Map<String, String> data =  new HashMap<>();
+			data.put("empName", result.getEmpDetails().getEmployeeName());
+			data.put("departmentName", result.getEmpDetails().getDepartmentName());
+			data.put("rankDescription", result.getEmpDetails().getRankDescription());
+			empDetailResponse.setData(data);
+		}
+		else {
+			empDetailResponse.setReqid(employeeDetailRequest.getReqid());
+			empDetailResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			empDetailResponse.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			empDetailResponse.setStatus_msg(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+			empDetailResponse.set_server_ts(LocalDateTime.now());
+			Map<String, String> data = new HashMap<>();
+			empDetailResponse.setData(data);
+		}
+		return ResponseEntity.ok(empDetailResponse);
+	}
 	
+	@PutMapping("/myhr/employee/update")
+	public ResponseEntity<UpdateEmployeeResponse> updateEmployee(@RequestBody UpdateEmployeeRequest updateEmployeerequest){
+		Map<String, String> data = updateEmployeerequest.getData();
+		UpdateEmployee updateEmployee = new UpdateEmployee();
+		String fullname = data.get("fullname");
+		if(fullname != null) {
+			updateEmployee.setFullname(fullname);
+		}
+		String name = data.get("fname");
+		if(name != null) {
+			updateEmployee.setFname(fullname);
+		}
+		String dobString = data.get("dob");
+		if(dobString != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				Date dob = dateFormat.parse(dobString);
+				updateEmployee.setDob(dob);
+			}catch(ParseException e){
+				e.printStackTrace();
+			}
+		}
+		String dojString = data.get("doj");
+		if(dojString != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				Date doj = dateFormat.parse(dojString);
+				updateEmployee.setDoj(doj);
+			}catch(ParseException e){
+				e.printStackTrace();
+			}
+		}
+		String salarystr = data.get("salary");
+		if(salarystr != null) {
+			int salary = Integer.parseInt(salarystr);
+			updateEmployee.setSalary(salary);
+		}
+		String deptstr = data.get("deptid");
+		if(deptstr != null) {
+			Long deptId = Long.parseLong(data.get(deptstr));
+			updateEmployee.setDeptId(deptId);
+		}
+		String rankstr = data.get("rankid");
+		if(rankstr != null) {
+			Long rank = Long.parseLong(data.get(rankstr));
+			updateEmployee.setRankId(rank);
+		}
+		String reportsToStr = data.get("reportsTo");
+		if(reportsToStr != null) {
+			Long reprortsTO = Long.parseLong(data.get(reportsToStr));
+			updateEmployee.setReportsTo(reprortsTO);
+		}
+		boolean res = employeeService.updateEmployee(updateEmployee, Long.parseLong(updateEmployeerequest.getEmpId()));
+		UpdateEmployeeResponse response = new UpdateEmployeeResponse();
+		if(res == true) {
+			response.setReqid(updateEmployeerequest.getReqid());
+			response.setStatus(HttpStatus.OK);
+			response.setStatus_code(HttpStatus.OK.value());
+			response.setStatus_msg(HttpStatus.OK.toString());
+			response.set_server_ts(LocalDateTime.now());
+			response.setMessage("Updated Employee record for empid: " + updateEmployeerequest.getEmpId());
+		}
+		else {
+			response.setReqid(updateEmployeerequest.getReqid());
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			response.setStatus_msg(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+			response.set_server_ts(LocalDateTime.now());
+			response.setMessage("Could not update employee record for empid: " + updateEmployeerequest.getEmpId());
+		}
+		return ResponseEntity.ok(response);
+	}
+	
+	@DeleteMapping("/myhr/employee/delete")
+	public ResponseEntity<DeleteEmployeeResponse> deleteEmployee(@RequestBody DeleteEmployeeRequest deleteEmployeeRequest){
+		Long empId = Long.parseLong(deleteEmployeeRequest.getEmpId());
+		boolean res = employeeService.deleteEmployee(deleteEmployeeRequest, empId);
+		DeleteEmployeeResponse response = new DeleteEmployeeResponse();
+		if(res == true) {
+			response.setReqid(deleteEmployeeRequest.getReqid());
+			response.setStatus(HttpStatus.OK);
+			response.setStatus_code(HttpStatus.OK.value());
+			response.setStatus_msg(HttpStatus.OK.toString());
+			response.set_server_ts(LocalDateTime.now());
+			response.setMessage("Deleted Employee record for empid: " + deleteEmployeeRequest.getEmpId());
+		}
+		else {
+			response.setReqid(deleteEmployeeRequest.getReqid());
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setStatus_code(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			response.setStatus_msg(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+			response.set_server_ts(LocalDateTime.now());
+			response.setMessage("Could not delete employee record for empid: " + deleteEmployeeRequest.getEmpId());
+		}
+		return ResponseEntity.ok(response);
+	}
 }

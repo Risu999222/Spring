@@ -2,9 +2,8 @@ package com.example.demo.dto;
 
 public class EmployeeDetails {
 	private String employeeName;
-    private String rankDescription;
-    private String departmentName;
-    private String supervisorName;
+    private String rankDesc;
+    private String deptName;
 	public String getEmployeeName() {
 		return employeeName;
 	}
@@ -12,21 +11,23 @@ public class EmployeeDetails {
 		this.employeeName = employeeName;
 	}
 	public String getRankDescription() {
-		return rankDescription;
+		return rankDesc;
 	}
-	public void setRankDescription(String rankDescription) {
-		this.rankDescription = rankDescription;
+	public void setRankDescription(String rankDesc) {
+		this.rankDesc = rankDesc;
 	}
 	public String getDepartmentName() {
-		return departmentName;
+		return deptName;
 	}
-	public void setDepartmentName(String departmentName) {
-		this.departmentName = departmentName;
+	public void setDepartmentName(String deptName) {
+		this.deptName = deptName;
 	}
-	public String getSupervisorName() {
-		return supervisorName;
+	public EmployeeDetails(String employeeName, String rankDesc, String deptName) {
+		this.employeeName = employeeName;
+		this.rankDesc = rankDesc;
+		this.deptName = deptName;
 	}
-	public void setSupervisorName(String supervisorName) {
-		this.supervisorName = supervisorName;
+	public EmployeeDetails() {
+		
 	}
 }
