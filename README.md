@@ -1,4 +1,4 @@
-{
+
 	function generateRandomString(length) {
 	    var result = '';
 	    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -12,7 +12,6 @@
 	pm.globals.set("requestId", randomString);
 	
 	pm.globals.set("timestamp", new Date().getTime());
-}
 
 Above is the script to add in pre request script of postman
 
