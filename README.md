@@ -111,4 +111,16 @@ Postman body exmaple for any request
 	    client_reqid VARCHAR(50) NOT NULL
 	);
 	
-	Select * from employee_shadow;
+	Select * from employee_shadow
+
+ 	//add
+  	{
+	    "token": "{{requestId}}",
+		"data": {
+	        
+	    },
+		"reqid": "{{requestId}}",
+		"_client_ts": "{{timestamp}}",
+		"_client_type" : "web",
+	    "filter": null
+	}
