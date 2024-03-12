@@ -113,7 +113,7 @@ Postman body exmaple for any request
 	
 	Select * from employee_shadow
 
- 	//add
+ 	//kist
   	{
 	    "token": "{{requestId}}",
 		"data": {
@@ -123,4 +123,23 @@ Postman body exmaple for any request
 		"_client_ts": "{{timestamp}}",
 		"_client_type" : "web",
 	    "filter": null
+	}
+
+ 	//add
+	{
+	    "token": "{{requestId}}",
+		"data": {
+	        "empId": "8",
+	        "fname": "Nishnt",
+	        "fullname": "Nishant raj",
+	        "dob": "2002-05-15",
+	        "doj": "2022-05-07",
+	        "salary": "3000",
+	        "reportsTo": "4",
+	        "deptid": "5",
+	        "rankid": "5"
+	    },
+		"reqid": "{{requestId}}",
+		"_client_ts": "{{timestamp}}",
+		"_client_type" : "web"
 	}
