@@ -113,7 +113,7 @@ Postman body exmaple for any request
 	
 	Select * from employee_shadow
 
- 	//kist
+ 	// - http://localhost:8080/myhr/employee/list - GET
   	{
 	    "token": "{{requestId}}",
 		"data": {
@@ -125,7 +125,7 @@ Postman body exmaple for any request
 	    "filter": null
 	}
 
- 	//add
+ 	// - http://localhost:8080/myhr/employee/add - POST
 	{
 	    "token": "{{requestId}}",
 		"data": {
@@ -142,4 +142,44 @@ Postman body exmaple for any request
 		"reqid": "{{requestId}}",
 		"_client_ts": "{{timestamp}}",
 		"_client_type" : "web"
+	}
+
+ 	//http://localhost:8080/myhr/employee/get - GET
+  	{
+	    "token": "{{requestId}}",
+		"data": {
+	        
+	    },
+		"reqid": "{{requestId}}",
+		"_client_ts": "{{timestamp}}",
+		"_client_type" : "web",
+	    "empId": "8"
+	}
+
+ 	// - http://localhost:8080/myhr/employee/update - PUT
+	{
+	    "token": "{{requestId}}",
+		"data": {
+	        "fname": "Nish",
+	        "fullname": "Nish raj",
+	        "dob": "2002-06-15",
+	        "doj": "2022-06-07",
+	        "salary": "300"
+	    },
+		"reqid": "{{requestId}}",
+		"_client_ts": "{{timestamp}}",
+		"_client_type" : "web",
+	    "empId": "2"
+	}
+
+ 	// - http://localhost:8080/myhr/employee/delete - DELETE
+	{
+	    "token": "{{requestId}}",
+		"data": {
+	
+	    },
+		"reqid": "{{requestId}}",
+		"_client_ts": "{{timestamp}}",
+		"_client_type" : "web",
+	    "empId": "1"
 	}
